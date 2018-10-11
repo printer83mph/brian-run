@@ -14,35 +14,38 @@ class Player extends Circle {
         this.inAir = false;
     }
 
+    bump(vel) {
+        this.vel.z = vel;
+        this.inAir = true;
+    }
+
     update() {
         // Controller
-        if (!this.inAir) {
+
+        if (this.inAir) {
+            this.vel.z -= 0.5;
+        } else {
             let velAdd = new Vector((keysdown.indexOf("d") != -1) - (keysdown.indexOf("a") != -1), (keysdown.indexOf("s") != -1) - (keysdown.indexOf("w") != -1));
             velAdd.setMagnitude(this.inAir ? 0 : this.accel);
             this.vel.add(velAdd);
             this.vel.scale(this.inAir ? 1 : 0.7);
         }
-        
 
-        // console.log(Vector.sub(velAdd, this.vel));
-
-        // console.log(diffVector);
-
-
-        // if (this.vel.magnitude() > this.speedcap) {
-        //     this.vel.setMagnitude(this.speedcap);
-        // }
+        if (this.vel.magnitude() > this.speedcap) {
+            this.vel.setMagnitude(this.speedcap);
+            console.log("speecap hit");
+        }
 
         this.pos.add(this.vel);
-        // if (frameCount % 2 == 0) {
-        //     console.log(Math.round(this.vel.x * 100) + ", " + Math.round(this.vel.y * 100));
-        // }
 
         // PLY logic
 
-        if (!this.inAir) {
-            
+        if (this.inAir && this.pos.z < 0) {
+            this.inAir = false;
+            this.pos.z = 0;
+            this.vel.z = 0;
         }
+
     }
 
     draw() {
