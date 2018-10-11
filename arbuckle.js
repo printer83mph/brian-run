@@ -22,76 +22,135 @@ window.addEventListener("keyup", function(e) {
 
 // VECTORS ------------------------------
 
-function Vector(x, y, z) {
-    this.x = x || 0;
-    this.y = y || 0;
-    this.z = z || 0;
-}
+class Vector {
 
-Vector.prototype = {
+    constructor(x, y, z) {
+        this.x = x || 0;
+        this.y = y || 0;
+        this.z = z || 0;
+    }
+
+    static add(v1, v2) {
+        return new Vector(v1.x + v2.x, v1.y + v2.y, v1.z + v2.z);
+    }
+
+    static sub(v1, v2) {
+        return new Vector(v1.x - v2.x, v1.y - v2.y, v1.z - v2.z);
+    }
+
+    static mul(v1, v2) {
+        return new Vector(v1.x * v2.x, v1.y * v2.y, v1.z * v2.z);
+    }
+
+    static scale(v1,s) {
+        return new Vector(v1.x * s, v1.y * s, v1.z * s);
+    }
+
+    static div(v1, v2) {
+        return new Vector(v1.x / v2.x, v1.y / v2.y, v1.z / v2.z)
+    }
+
+    static normalize(v) {
+        return Vector.div();
+    }
     
-    add: function(v) {
+    add(v) {
         this.x += v.x;
         this.y += v.y;
         this.z += v.z;
-    },
+    }
 
-    sub: function(v) {
+    sub(v) {
         this.x -= v.x;
         this.y -= v.y;
         this.z -= v.z;
-    },
+    }
     
-    mul: function(v) {
+    mul(v) {
         this.x *= v.x;
         this.y *= v.y;
         this.z *= v.z;
-    },
-    
+    }
 
-    div: function(v) {
+    scale(s) {
+        this.x *= s;
+        this.y *= s;
+        this.z *= s;
+    }
+
+    div(v) {
         this.x /= v.x;
         this.y /= v.y;
         this.z /= v.z;
-    },
+    }
+
+    normalize() {
+        if (this.magnitude() != 0) {
+            this.scale(1/this.magnitude());
+        }
+    }
+
+    // faster for comparison
+    magnitudeSq() {
+        return this.x**2 + this.y**2 + this.z**2;
+    }
     
-    magnitude: function() {
+    magnitude() {
         return Math.sqrt(this.x**2 + this.y**2 + this.z**2);
-    },
+    }
 
-    setMagnitude: function(m) {
-        this.div(this.getMag());
-        this.mul(new Vector(m, m));
-    },
+    setMagnitude(m) {
+        this.normalize();
+        this.scale(m);
+    }
 
-    heading: function() {
+    heading() {
         return Math.atan2(this.y, this.x);
     }
 
+    setHeading(h) {
+        let mag = this.magnitude();
+        this.normalize();
+        this.mul(mag);
+    }
+
+    dot(v) {
+        return v1.x * v2.x + v1.y * v2.y; 
+    }
 
 }
 
-Vector.add = function(v1, v2) {
-    return new Vector(v1.x + v2.x, v1.y + v2.y);
+// COLLISIONS -----------------------------
+
+class Point {
+    constructor(x, y) {
+        this.pos = new Vector(x, y);
+    }
 }
 
-Vector.sub = function(v1, v2) {
-    return new Vector(v1.x - v2.x, v1.x - v2.x);
+class Ellipse extends Point {
+    constructor(x, y, sx, sy) {
+        super(x, y);
+        this.size = new Vector(sx, sy);
+    }
 }
 
-Vector.mul = function(v1, v2) {
-    return new Vector(v1.x * v2.x, v1.y * v2.y);
+class Circle extends Ellipse {
+    constructor(x, y, s) {
+        super(x, y, s, s);
+    }
 }
 
-Vector.div = function(v1, v2) {
-    return new Vector(v1.x / v2.x, v1.y / v2.y);
+class Rectangle extends Point {
+    constructor(x, y, w, h) {
+        super(x, y);
+        this.size = new Vector(w, h);
+    }
 }
 
-Vector.normalize = function(v) {
-    let mag = v.getMag();
-    return new Vector()
-}
-
-Vector.dot = function(v1, v2) {
-    return v1.x * v2.x + v1.y * v2.y; 
+Collisions = {
+    pointInCircle: function(p, c) {
+        console.log("mag squared: " + Vector.sub(p.pos, c.pos).magnitudeSq() + ", r squared: " + (c.size.x/2)**2);
+        return Vector.sub(p.pos, c.pos).magnitudeSq() < (c.size.x/2)**2;
+    }
 }

@@ -1,51 +1,97 @@
 // TODO: put entire thing into anonymous function: (function() {})();
 
-var canvas, ctx, game;
-
-// ENTITY ------------------------------
-
-class Entity {
-    constructor(x, y, sx, sy) {
-        this.pos = new Vector(x, y);
-        this.size = new Vector(sx, sy);
-    }
-    isTouching(e) {
-        return (this.x + this.sx > e.x && e.x + e.sx > this.x && this.y + this.sy > e.y && e.y + e.sy > this.y );
-    }
-}
+var canvas, ctx, game, frameCount, lastUpdate;
 
 // PLAYER ------------------------------
 
-class Player extends Entity {
+class Player extends Circle {
     constructor(x, y) {
-        super(x, y, 20, 20);
+        super(x, y, 40);
+        this.accel = 3;
+        this.speedcap = 13;
+        this.vel = new Vector(0,0);
+
+        this.inAir = false;
     }
 
     update() {
-        let xVelAdd = (keysdown.indexOf("ArrowRight") != -1) - (keysdown.indexOf("ArrowLeft") != -1);
-        let yVelAdd = (keysdown.indexOf("ArrowDown") != -1) - (keysdown.indexOf("ArrowUp") != -1);
-        let mag = Math.sqrt(xVelAdd**2 + yVelAdd**2);
-        let newXVelAdd = (xVelAdd/mag) || 0;
-        let newYVelAdd = (yVelAdd/mag) || 0;
+        // Controller
+        if (!this.inAir) {
+            let velAdd = new Vector((keysdown.indexOf("d") != -1) - (keysdown.indexOf("a") != -1), (keysdown.indexOf("s") != -1) - (keysdown.indexOf("w") != -1));
+            velAdd.setMagnitude(this.inAir ? 0 : this.accel);
+            this.vel.add(velAdd);
+            this.vel.scale(this.inAir ? 1 : 0.7);
+        }
+        
 
-        this.vx += newXVelAdd*5;
-        this.vy += newYVelAdd*5;
+        // console.log(Vector.sub(velAdd, this.vel));
 
-        this.vy *= 0.6;
-        this.vx *= 0.6;
+        // console.log(diffVector);
 
-        this.x += this.vx;
-        this.y += this.vy;
+
+        // if (this.vel.magnitude() > this.speedcap) {
+        //     this.vel.setMagnitude(this.speedcap);
+        // }
+
+        this.pos.add(this.vel);
+        // if (frameCount % 2 == 0) {
+        //     console.log(Math.round(this.vel.x * 100) + ", " + Math.round(this.vel.y * 100));
+        // }
+
+        // PLY logic
+
+        if (!this.inAir) {
+            
+        }
     }
 
     draw() {
-        ctx.draw
+        
+        // DEBUG
+        ctx.fillStyle = (game.ply.inAir ? "#ff0000" : "#000000");
+        ctx.beginPath();
+        ctx.ellipse(this.pos.x, this.pos.y, this.size.x, this.size.y, 0, 0, Math.PI * 2, false);
+        ctx.fill();
+
+        ctx.strokeStyle = "#0000ff";
+        ctx.lineWidth = 10;
+        ctx.beginPath();
+        ctx.moveTo(this.pos.x, this.pos.y);
+        let controller = new Vector((keysdown.indexOf("d") != -1) - (keysdown.indexOf("a") != -1), (keysdown.indexOf("s") != -1) - (keysdown.indexOf("w") != -1));
+        controller.setMagnitude(game.ply.speedcap*10);
+        ctx.lineTo(this.pos.x + controller.x, this.pos.y + controller.y);
+        ctx.stroke();
+
+        ctx.strokeStyle = "#00ff00";
+        ctx.lineWidth = 5;
+        ctx.beginPath();
+        ctx.moveTo(this.pos.x, this.pos.y);
+        ctx.lineTo(this.pos.x + this.vel.x*10, this.pos.y + this.vel.y*10);
+        ctx.stroke();
     }
 }
 
 // GAME ------------------------------
 
-function restart() {
+function loop() {
+
+    let now = Date.now();
+    var dt = now - lastUpdate;
+    lastUpdate = now;
+    
+    update();
+    draw();
+
+    frameCount++;
+
+
+    window.requestAnimationFrame(loop);
+
+}
+
+function setup() {
+
+    frameCount = 0;
 
     game = {}
 
@@ -57,16 +103,10 @@ function restart() {
     game.state = "ACTIVE";
 }
 
-function plyUpdate() {
-
-    
-
-}
-
 function update() {
 
     if (game.state == "ACTIVE") {
-        plyUpdate();
+        game.ply.update();
     
         ctx.fillStyle = "#ffffff";
         ctx.fillRect(0, 0, canvas.width, canvas.height);
@@ -74,10 +114,13 @@ function update() {
         
     }
     
-    ctx.fillStyle = "#000000";
-    ctx.fillRect(game.ply.x, game.ply.y, 40, 40);
-    
-    window.requestAnimationFrame(update);
+
+}
+
+function draw() {
+    ctx.fillStyle = "#ffffff";
+    ctx.fillRect(0, 0, canvas.width, canvas.height);
+    game.ply.draw();
 }
 
 window.onload = function() {
@@ -85,7 +128,7 @@ window.onload = function() {
     canvas = document.getElementById("cnvs");
     ctx = canvas.getContext("2d");
 
-    restart();
-    update();
+    setup();
+    loop();
 
 }
