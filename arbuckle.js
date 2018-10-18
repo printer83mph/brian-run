@@ -111,13 +111,14 @@ class Vector {
     }
 
     setHeading(h) {
+        // TODO: this function
         let mag = this.magnitude();
         this.normalize();
         this.mul(mag);
     }
 
     dot(v) {
-        return v1.x * v2.x + v1.y * v2.y; 
+        return this.x * v.x + this.y * v.y; 
     }
 
 }
@@ -154,5 +155,9 @@ Collisions = {
     pointInCircle: function(p, c) {
         console.log("mag squared: " + Vector.sub(p.pos, c.pos).magnitudeSq() + ", r squared: " + (c.size.x/2)**2);
         return Vector.sub(p.pos, c.pos).magnitudeSq() < (c.size.x/2)**2;
+    },
+
+    circleTouchingCircle: function(c1, c2) {
+        return Vector.sub(c1.pos, c2.pos).magnitudeSq() < (c1.size.x/2 + c2.size.x/2)**2;
     }
 }
