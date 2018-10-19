@@ -159,7 +159,7 @@ class Rectangle extends Point {
 
 Collisions = {
     pointInCircle: function(p, c) {
-        console.log("mag squared: " + Vector.sub(p.pos, c.pos).magnitudeSq() + ", r squared: " + (c.size.x/2)**2);
+        // console.log("mag squared: " + Vector.sub(p.pos, c.pos).magnitudeSq() + ", r squared: " + (c.size.x/2)**2);
         return Vector.sub(p.pos, c.pos).magnitudeSq() < (c.size.x/2)**2;
     },
 

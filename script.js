@@ -30,8 +30,9 @@ function addImage(imgList, key) {
     var img = new Image(content[1], content[2]);
     img.addEventListener("load", function() {
         imgList[key] = this;
+        console.log(`Fully loaded ${key}`);
     });
-    console.log(`Loaded ${key}`);
+    console.log(`Starting loading of ${key}`);
     img.src = `media/${content[0]}`;
 }
 
@@ -142,7 +143,7 @@ class Pickup extends Circle {
     }
 
     despawnable() {
-        return this.pos.x + this.size.x < 0 || Collisions.circleTouchingCircle(this, this.game.ply);
+        return this.pos.x + this.size.x < 0 || Collisions.pointInCircle(this.game.ply, this);
     }
 
     canBePickedUp() {
@@ -198,7 +199,7 @@ class Game {
                 }
             }
 
-            // TODO: logic for spawns
+            // TODO: logic for spawns + make stuff frame-independent
             if (frameCount % 120 == 0) {
                 if (Math.random() < 0.3) {
                     this.pickups.push(new Pickup(this, "ALKALI", Math.random() * canvas.height));
@@ -233,7 +234,7 @@ class Game {
     draw() {
 
         // draw bg
-        ctx.fillStyle = `rgba(255,255,255,${this.state == "MENU" ? .2 : 1})`;
+        ctx.fillStyle = `rgba(255,255,255,1)`;
         ctx.fillRect(0, 0, canvas.width, canvas.height);
 
         if (this.state == "ACTIVE") {
@@ -250,12 +251,17 @@ class Game {
             // ctx.beginPath();
             // ctx.ellipse(canvas.width/2, canvas.height/2, 30, 30, 0, 0, Math.PI * 2);
             // ctx.fill();
-            ctx.fillStyle = "rgba(0,0,0,1)";
+            ctx.strokeStyle = "rgba(0,0,0,.2)";
             ctx.lineWidth = 5;
             ctx.beginPath();
             // ctx.ellipse(canvas.width/2, canvas.height/2, 30, 30, Math.PI * (Math.sin((frameCount + 24)/32) + 0.5), 0, Math.PI * (Math.sin(frameCount/32) + 1));
             ctx.ellipse(canvas.width/2, canvas.height/2, 30, 30, Math.PI/2, 0, Math.PI*2*Object.keys(this.images).length/Object.keys(imgFiles).length);
             console.log(Object.keys(this.images).length/Object.keys(imgFiles).length);
+            ctx.stroke();
+        } else if (this.state == "MENU") {
+            ctx.strokeStyle = "rgba(0,0,0,1)";
+            ctx.beginPath();
+            ctx.ellipse(canvas.width/2, canvas.height/2, 30, 30, 0, 0, Math.PI*2);
             ctx.stroke();
         }
 
@@ -268,7 +274,8 @@ class Game {
 function loop() {
 
     let now = Date.now();
-    var dt = now - lastUpdate;
+    // TODO: keep dynamic or just make it frame-independent???? would be easier to work w/ time if independent
+    var dt = Math.min(now - lastUpdate, 33.3);
     lastUpdate = now;
     
     game.update(dt);
