@@ -21,7 +21,7 @@ const pickupTypes = {
     }
 }
 
-var canvas, ctx, game, frameCount, lastUpdate;
+var canvas, ctx, game, frameCount, lastUpdate, elapsedTime;
 
 // LOADING IMAGES
 
@@ -49,8 +49,9 @@ function loadImages(imgList) {
 class Player extends Circle {
     constructor(x, y, game) {
         super(x, y, 60);
-        this.accel = 0.1;
-        this.speedcap = 4;
+        this.accel = 0.156;
+        this.friction = .97;
+        this.speedcap = 5;
         this.vel = new Vector(0,0);
         this.pickupRange = 70;
 
@@ -73,10 +74,12 @@ class Player extends Circle {
             let velAdd = new Vector((keysdown.indexOf("d") != -1) - (keysdown.indexOf("a") != -1), (keysdown.indexOf("s") != -1) - (keysdown.indexOf("w") != -1));
             velAdd.setMagnitude(this.inAir ? 0 : this.accel * dt);
             this.vel.add(velAdd);
-            // Make this scale with delta time
-            this.vel.scale(this.inAir ? 1 : 0.7);
+            // TODO: Make this scale with delta time - kinda done?
+            this.vel.scale(this.inAir ? 0 : this.friction**dt);
         }
 
+
+        // Apply speedcap
         if (this.vel.magnitude() > this.speedcap) {
             this.vel.setMagnitude(this.speedcap);
             console.log("speedcap hit");
@@ -105,21 +108,21 @@ class Player extends Circle {
         // REAL DRAWING
         ctx.drawImage(this.game.images["ply"], this.pos.x - this.size.x/2, this.pos.y - this.size.y/2);
 
-        // ctx.strokeStyle = "#0000ff";
-        // ctx.lineWidth = 10;
-        // ctx.beginPath();
-        // ctx.moveTo(this.pos.x, this.pos.y);
-        // let controller = new Vector((keysdown.indexOf("d") != -1) - (keysdown.indexOf("a") != -1), (keysdown.indexOf("s") != -1) - (keysdown.indexOf("w") != -1));
-        // controller.setMagnitude(game.ply.speedcap*10);
-        // ctx.lineTo(this.pos.x + controller.x, this.pos.y + controller.y);
-        // ctx.stroke();
+        ctx.strokeStyle = "#0000ff";
+        ctx.lineWidth = 10;
+        ctx.beginPath();
+        ctx.moveTo(this.pos.x, this.pos.y);
+        let controller = new Vector((keysdown.indexOf("d") != -1) - (keysdown.indexOf("a") != -1), (keysdown.indexOf("s") != -1) - (keysdown.indexOf("w") != -1));
+        controller.setMagnitude(game.ply.speedcap*10);
+        ctx.lineTo(this.pos.x + controller.x, this.pos.y + controller.y);
+        ctx.stroke();
 
-        // ctx.strokeStyle = "#00ff00";
-        // ctx.lineWidth = 5;
-        // ctx.beginPath();
-        // ctx.moveTo(this.pos.x, this.pos.y);
-        // ctx.lineTo(this.pos.x + this.vel.x*10, this.pos.y + this.vel.y*10);
-        // ctx.stroke();
+        ctx.strokeStyle = "#00ff00";
+        ctx.lineWidth = 5;
+        ctx.beginPath();
+        ctx.moveTo(this.pos.x, this.pos.y);
+        ctx.lineTo(this.pos.x + this.vel.x*10, this.pos.y + this.vel.y*10);
+        ctx.stroke();
     }
 }
 
@@ -276,6 +279,7 @@ function loop() {
     let now = Date.now();
     // TODO: frame-independent. need elapsed time variable - add dt to it every loop
     var dt = Math.min(now - lastUpdate, 33.3);
+    elapsedTime += dt;
     lastUpdate = now;
     
     game.update(dt);
@@ -290,7 +294,9 @@ function loop() {
 
 function setup() {
 
+    lastUpdate = Date.now();
     frameCount = 0;
+    elapsedTime = 0;
 
     game = new Game();
 
