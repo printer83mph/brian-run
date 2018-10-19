@@ -274,7 +274,7 @@ class Game {
 function loop() {
 
     let now = Date.now();
-    // TODO: keep dynamic or just make it frame-independent???? would be easier to work w/ time if independent
+    // TODO: frame-independent. need elapsed time variable - add dt to it every loop
     var dt = Math.min(now - lastUpdate, 33.3);
     lastUpdate = now;
     
