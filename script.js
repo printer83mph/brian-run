@@ -48,8 +48,8 @@ function loadImages(imgList) {
 class Player extends Circle {
     constructor(x, y, game) {
         super(x, y, 60);
-        this.accel = 0.3;
-        this.speedcap = 13;
+        this.accel = 0.1;
+        this.speedcap = 4;
         this.vel = new Vector(0,0);
         this.pickupRange = 70;
 
@@ -72,6 +72,7 @@ class Player extends Circle {
             let velAdd = new Vector((keysdown.indexOf("d") != -1) - (keysdown.indexOf("a") != -1), (keysdown.indexOf("s") != -1) - (keysdown.indexOf("w") != -1));
             velAdd.setMagnitude(this.inAir ? 0 : this.accel * dt);
             this.vel.add(velAdd);
+            // Make this scale with delta time
             this.vel.scale(this.inAir ? 1 : 0.7);
         }
 
@@ -134,10 +135,14 @@ class Pickup extends Circle {
 
     update(dt) {
         this.pos.x -= dt * this.game.speed;
+
+        if (this.canBePickedUp()) {
+            this.pos.add(Vector.setMagnitude(Vector.sub(this.game.ply.pos, this.pos), 0.5 * dt));
+        }
     }
 
     despawnable() {
-        return this.pos.x + this.size.x < 0;
+        return this.pos.x + this.size.x < 0 || Collisions.circleTouchingCircle(this, this.game.ply);
     }
 
     canBePickedUp() {
@@ -228,7 +233,7 @@ class Game {
     draw() {
 
         // draw bg
-        ctx.fillStyle = "#ffffff";
+        ctx.fillStyle = `rgba(255,255,255,${this.state == "MENU" ? .2 : 1})`;
         ctx.fillRect(0, 0, canvas.width, canvas.height);
 
         if (this.state == "ACTIVE") {
@@ -240,6 +245,18 @@ class Game {
 
             // draw ply
             this.ply.draw();
+        } else if (this.state == "LOADING") {
+            // ctx.fillStyle = "#c0c0c0";
+            // ctx.beginPath();
+            // ctx.ellipse(canvas.width/2, canvas.height/2, 30, 30, 0, 0, Math.PI * 2);
+            // ctx.fill();
+            ctx.fillStyle = "rgba(0,0,0,1)";
+            ctx.lineWidth = 5;
+            ctx.beginPath();
+            // ctx.ellipse(canvas.width/2, canvas.height/2, 30, 30, Math.PI * (Math.sin((frameCount + 24)/32) + 0.5), 0, Math.PI * (Math.sin(frameCount/32) + 1));
+            ctx.ellipse(canvas.width/2, canvas.height/2, 30, 30, Math.PI/2, 0, Math.PI*2*Object.keys(this.images).length/Object.keys(imgFiles).length);
+            console.log(Object.keys(this.images).length/Object.keys(imgFiles).length);
+            ctx.stroke();
         }
 
     }

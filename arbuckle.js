@@ -51,9 +51,15 @@ class Vector {
     }
 
     static normalize(v) {
-        if (this.magnitude() != 0) {
+        if (v.magnitude() != 0) {
             return Vector.scale(v, 1/v.magnitude());
         }
+    }
+
+    static setMagnitude(v, m) {
+        let out = Vector.normalize(v);
+        out.scale(m);
+        return out;
     }
     
     add(v) {
