@@ -49,9 +49,9 @@ function loadImages(imgList) {
 class Player extends Circle {
     constructor(x, y, game) {
         super(x, y, 60);
-        this.accel = 0.156;
+        this.accel = 0.4;
         this.friction = .97;
-        this.speedcap = 5;
+        this.speedcap = 12;
         this.vel = new Vector(0,0);
         this.pickupRange = 70;
 
@@ -65,7 +65,7 @@ class Player extends Circle {
         this.inAir = true;
     }
 
-    update(dt) {
+    update() {
         // Controller
 
         if (this.inAir) {
@@ -80,12 +80,13 @@ class Player extends Circle {
 
 
         // Apply speedcap
-        if (this.vel.magnitude() > this.speedcap) {
-            this.vel.setMagnitude(this.speedcap);
-            console.log("speedcap hit");
-        }
+        // if (this.vel.magnitude() > this.speedcap) {
+        //     this.vel.setMagnitude(this.speedcap);
+        //     console.log("speedcap hit");
+        // }
 
-        this.pos.add(this.vel);
+        // TODO: make this simpler
+        this.pos.add(Vector.scale(this.vel, dt/50));
 
         // PLY logic
 
@@ -137,7 +138,7 @@ class Pickup extends Circle {
         this.game = game;
     }
 
-    update(dt) {
+    update() {
         this.pos.x -= dt * this.game.speed;
 
         if (this.canBePickedUp()) {
@@ -187,7 +188,7 @@ class Game {
 
     }
 
-    update(dt) {
+    update() {
 
         // run event handler
         this.events.update();

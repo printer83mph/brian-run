@@ -6,7 +6,7 @@ function draw() {}
 
 // VARIABLES
 
-var lastUpdate, elapsedTime, frameCount, ctx, canvas;
+var lastUpdate, elapsedTime, dt, frameCount, ctx, canvas;
 
 // ENGINE STUFF
 
@@ -28,11 +28,11 @@ function loop() {
 
     let now = Date.now();
     // TODO: frame-independent. need elapsed time variable - add dt to it every loop
-    var dt = Math.min(now - lastUpdate, 33.3);
+    dt = Math.min(now - lastUpdate, 33.3);
     elapsedTime += dt;
     lastUpdate = now;
     
-    update(dt);
+    update();
     draw();
 
     frameCount++;
