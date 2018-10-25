@@ -21,7 +21,7 @@ const pickupTypes = {
     }
 }
 
-var canvas, ctx, game, frameCount, lastUpdate, elapsedTime;
+var game;
 
 // LOADING IMAGES
 
@@ -274,24 +274,6 @@ class Game {
 
 // SETUP STUFF ------------------------------
 
-function loop() {
-
-    let now = Date.now();
-    // TODO: frame-independent. need elapsed time variable - add dt to it every loop
-    var dt = Math.min(now - lastUpdate, 33.3);
-    elapsedTime += dt;
-    lastUpdate = now;
-    
-    game.update(dt);
-    game.draw();
-
-    frameCount++;
-
-
-    window.requestAnimationFrame(loop);
-
-}
-
 function setup() {
 
     lastUpdate = Date.now();
@@ -302,12 +284,10 @@ function setup() {
 
 }
 
-window.onload = function() {
+function update(dt) {
+    game.update(dt);
+}
 
-    canvas = document.getElementById("cnvs");
-    ctx = canvas.getContext("2d");
-
-    setup();
-    loop();
-
+function draw() {
+    game.draw();
 }

@@ -1,5 +1,36 @@
 
-// this is a utility script to make stuff easier
+// VARIABLES
+
+var lastUpdate, elapsedTime, frameCount, ctx, canvas;
+
+// ENGINE STUFF
+
+window.onload = function() {
+
+    canvas = document.getElementById("cnvs");
+    ctx = canvas.getContext("2d");
+
+    setup();
+    loop();
+
+}
+
+function loop() {
+
+    let now = Date.now();
+    // TODO: frame-independent. need elapsed time variable - add dt to it every loop
+    var dt = Math.min(now - lastUpdate, 33.3);
+    elapsedTime += dt;
+    lastUpdate = now;
+    
+    update(dt);
+    draw();
+
+    frameCount++;
+
+    window.requestAnimationFrame(loop);
+
+}
 
 // KEYS DOWN ------------------------------
 
