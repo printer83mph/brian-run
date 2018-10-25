@@ -173,6 +173,8 @@ class Game {
         
         this.ply = new Player(canvas.width/2, canvas.height/2, this);
         
+        this.events = new EventHandler();
+
         this.speed = 0.2;
         this.pickups = [];
         this.enemies = [];
@@ -186,6 +188,9 @@ class Game {
     }
 
     update(dt) {
+
+        // run event handler
+        this.events.update();
 
         if (this.state == "ACTIVE") {
             

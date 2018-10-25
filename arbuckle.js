@@ -1,3 +1,8 @@
+// necessary functions
+
+function setup() {}
+function update() {}
+function draw() {}
 
 // VARIABLES
 
@@ -201,4 +206,35 @@ Collisions = {
     circleTouchingCircle: function(c1, c2) {
         return Vector.sub(c1.pos, c2.pos).magnitudeSq() < (c1.size.x/2 + c2.size.x/2)**2;
     }
+}
+
+// EVENTS
+
+class EventHandler {
+
+    // TODO: polish this up, still WIP
+    
+    constructor() {
+        this.eventQueue = [];
+    }
+
+    addEvent(time, callback, obj) {
+        this.eventQueue.push({"time": time + elapsedTime, "callback": callback, "obj": obj});
+    }
+
+    clearQueue() {
+        this.eventQueue.length = 0;
+    }
+
+    update() {
+        var i = this.eventQueue.length;
+        while (i--) {
+            let event = this.eventQueue[i];
+            if (elapsedTime > event.time) {
+                event.callback(event.obj);
+                this.eventQueue.splice(i, 1);
+            }
+        }
+    }
+
 }
