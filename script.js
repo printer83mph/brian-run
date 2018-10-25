@@ -276,10 +276,6 @@ class Game {
 
 function setup() {
 
-    lastUpdate = Date.now();
-    frameCount = 0;
-    elapsedTime = 0;
-
     game = new Game();
 
 }

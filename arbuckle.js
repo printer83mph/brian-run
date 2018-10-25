@@ -10,6 +10,10 @@ window.onload = function() {
     canvas = document.getElementById("cnvs");
     ctx = canvas.getContext("2d");
 
+    lastUpdate = Date.now();
+    frameCount = 0;
+    elapsedTime = 0;
+
     setup();
     loop();
 
