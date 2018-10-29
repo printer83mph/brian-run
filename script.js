@@ -21,6 +21,23 @@ const pickupTypes = {
     }
 }
 
+const chems = {
+    "TEST": {
+        "ingredients": [
+            ["NONMETAL", 3],
+            ["TRANSITION", 2]
+        ]
+    }
+}
+
+const weps = {
+    "CROWBAR": {
+        "ingredients": [
+            ["TRANSITION", 3]
+        ]
+    }
+}
+
 var game;
 
 // LOADING IMAGES
