@@ -66,8 +66,8 @@ function loadImages(imgList) {
 class Player extends Circle {
     constructor(x, y, game) {
         super(x, y, 60);
-        this.accel = 0.4;
-        this.friction = .97;
+        this.accel = 1.3;
+        // this.friction = .97;
         this.speedcap = 12;
         this.vel = new Vector(0,0);
         this.pickupRange = 70;
@@ -90,9 +90,10 @@ class Player extends Circle {
         } else {
             let velAdd = new Vector((keysdown.indexOf("d") != -1) - (keysdown.indexOf("a") != -1), (keysdown.indexOf("s") != -1) - (keysdown.indexOf("w") != -1));
             velAdd.setMagnitude(this.inAir ? 0 : this.accel * dt);
-            this.vel.add(velAdd);
+            // velAdd.scale(1/this.vel.magnitude() || 100);
+            this.vel.set(velAdd);
             // TODO: Make this scale with delta time - kinda done?
-            this.vel.scale(this.inAir ? 0 : this.friction**dt);
+            // this.vel.scale(this.inAir ? 0 : this.friction**dt);
         }
 
 
@@ -103,7 +104,7 @@ class Player extends Circle {
         // }
 
         // TODO: make this simpler
-        this.pos.add(Vector.scale(this.vel, dt/50));
+        this.pos.add(Vector.scale(this.vel, dt/100));
 
         // PLY logic
 
@@ -126,21 +127,21 @@ class Player extends Circle {
         // REAL DRAWING
         ctx.drawImage(this.game.images["ply"], this.pos.x - this.size.x/2, this.pos.y - this.size.y/2);
 
-        ctx.strokeStyle = "#0000ff";
-        ctx.lineWidth = 10;
-        ctx.beginPath();
-        ctx.moveTo(this.pos.x, this.pos.y);
-        let controller = new Vector((keysdown.indexOf("d") != -1) - (keysdown.indexOf("a") != -1), (keysdown.indexOf("s") != -1) - (keysdown.indexOf("w") != -1));
-        controller.setMagnitude(game.ply.speedcap*10);
-        ctx.lineTo(this.pos.x + controller.x, this.pos.y + controller.y);
-        ctx.stroke();
+        // ctx.strokeStyle = "#0000ff";
+        // ctx.lineWidth = 10;
+        // ctx.beginPath();
+        // ctx.moveTo(this.pos.x, this.pos.y);
+        // let controller = new Vector((keysdown.indexOf("d") != -1) - (keysdown.indexOf("a") != -1), (keysdown.indexOf("s") != -1) - (keysdown.indexOf("w") != -1));
+        // controller.setMagnitude(game.ply.speedcap*10);
+        // ctx.lineTo(this.pos.x + controller.x, this.pos.y + controller.y);
+        // ctx.stroke();
 
-        ctx.strokeStyle = "#00ff00";
-        ctx.lineWidth = 5;
-        ctx.beginPath();
-        ctx.moveTo(this.pos.x, this.pos.y);
-        ctx.lineTo(this.pos.x + this.vel.x*10, this.pos.y + this.vel.y*10);
-        ctx.stroke();
+        // ctx.strokeStyle = "#00ff00";
+        // ctx.lineWidth = 5;
+        // ctx.beginPath();
+        // ctx.moveTo(this.pos.x, this.pos.y);
+        // ctx.lineTo(this.pos.x + this.vel.x*10, this.pos.y + this.vel.y*10);
+        // ctx.stroke();
     }
 }
 
