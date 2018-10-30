@@ -101,6 +101,17 @@ class Vector {
         out.scale(m);
         return out;
     }
+
+    set(x, y) {
+        if (typeof y == "number") {
+            this.x = x;
+            this.y = y;
+        }
+        else {
+            this.x = x.x;
+            this.y = x.y;
+        }
+    }
     
     add(v) {
         this.x += v.x;
